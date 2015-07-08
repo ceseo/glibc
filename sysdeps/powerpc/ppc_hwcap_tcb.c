@@ -18,9 +18,11 @@
 /* Symbol to identify the presence of the HWCAP/HWCAP2 bits in the
    TCB.  */
 
-int __ppc_hwcap_tcb ()
+#include <shlib-compat.h>
+
+int __ppc_hwcap_tcb (void)
 {
- return 0;
+  return 0;
 }
 
 versioned_symbol (libc, __ppc_hwcap_tcb, ppc_hwcap_tcb, GLIBC_2_23);
