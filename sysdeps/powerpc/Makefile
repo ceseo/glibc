@@ -28,7 +28,8 @@ endif
 
 ifeq ($(subdir),misc)
 sysdep_headers += sys/platform/ppc.h
-tests += test-gettimebase
+sysdep_routines += ppc_hwcap_tcb
+tests += test-gettimebase test-get_hwcap
 endif
 
 ifneq (,$(filter %le,$(config-machine)))

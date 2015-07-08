@@ -14,6 +14,48 @@
 Facilities specific to PowerPC that are not specific to a particular
 operating system are declared in @file{sys/platform/ppc.h}.
 
+@deftypefun {uint32_t} __ppc_get_hwcap (void)
+Read the current value of the Hardware Capability (HWCAP) bits from the
+Thread Control Block (TCB).
+
+The HWCAP bits state the hardware features available in the current
+processor.  Those bits are set into the TCB during TLS initialization.
+
+@code{__ppc_get_hwcap} reads the value of the HWCAP bits directly from
+the TCB, without the overhead of querying the auxiliary vector.
+@end deftypefun
+
+@deftypefun {uint32_t} __ppc_get_hwcap2 (void)
+Read the current value of the Hardware Capability 2 (HWCAP2) bits from the
+Thread Control Block (TCB).
+
+The HWCAP2 bits state the hardware features available in the current
+processor.  Those bits are set into the TCB during TLS initialization.
+
+@code{__ppc_get_hwcap2} reads the value of the HWCAP2 bits directly from
+the TCB, without the overhead of querying the auxiliary vector.
+@end deftypefun
+
+@deftypefun {void} __ppc_set_hwcap (uint32_t __hwcap_mask)
+Writes a Hardware Capability (HWCAP) bit mask to the designated area in the
+the Thread Control Block (TCB).
+
+This function is intended to be used by GCC __builtin_cpu_init() only to set the
+HWCAP bits if necessary.  Do not set the HWCAP bits yourself unless you know what
+you are doing.  Setting a wrong bit mask will break the functionality of 
+@code{__ppc_get_hwcap}.
+@end deftypefun
+
+@deftypefun {void} __ppc_set_hwcap2 (uint32_t __hwcap2_mask)
+Writes a Hardware Capability 2 (HWCAP2) bit mask to the designated area in the
+the Thread Control Block (TCB).
+
+This function is intended to be used by GCC __builtin_cpu_init() only to set the
+HWCAP2 bits if necessary.  Do not set the HWCAP2 bits yourself unless you know what
+you are doing.  Setting a wrong bit mask will break the functionality of 
+@code{__ppc_get_hwcap2}.
+@end deftypefun
+
 @deftypefun {uint64_t} __ppc_get_timebase (void)
 @safety{@prelim{}@mtsafe{}@assafe{}@acsafe{}}
 Read the current value of the Time Base Register.

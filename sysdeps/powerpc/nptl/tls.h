@@ -63,8 +63,17 @@ typedef union dtv
    are private.  */
 typedef struct
 {
+  /* Reservation for HWCAP data. To be accessed by GCC in
+     __builtin_cpu_is(), __builtin_cpu_supports() and
+     __builtin_cpu_init(), so it is a part of public ABI.  */
+  unsigned int hwcap2;
+  unsigned int hwcap;
   /* Indicate if HTM capable (ISA 2.07).  */
   int tm_capable;
+  /* Explicit padding for alignment in ppc64.  */
+#ifdef __powerpc64__
+  int padding;
+#endif
   /* Reservation for Dynamic System Optimizer ABI.  */
   uintptr_t dso_slot2;
   uintptr_t dso_slot1;
@@ -134,7 +143,11 @@ register void *__thread_register __asm__ ("r13");
 # define TLS_INIT_TP(tcbp) \
   ({ 									      \
     __thread_register = (void *) (tcbp) + TLS_TCB_OFFSET;		      \
-    THREAD_SET_TM_CAPABLE (GLRO (dl_hwcap2) & PPC_FEATURE2_HAS_HTM ? 1 : 0);  \
+    unsigned int hwcap = GLRO(dl_hwcap);				      \
+    unsigned int hwcap2 = GLRO(dl_hwcap2);				      \
+    THREAD_SET_TM_CAPABLE (hwcap2 & PPC_FEATURE2_HAS_HTM ? 1 : 0);	      \
+    THREAD_SET_HWCAP (hwcap);						      \
+    THREAD_SET_HWCAP2 (hwcap2);						      \
     NULL;								      \
   })
 
@@ -142,7 +155,11 @@ register void *__thread_register __asm__ ("r13");
 # define TLS_DEFINE_INIT_TP(tp, pd) \
     void *tp = (void *) (pd) + TLS_TCB_OFFSET + TLS_PRE_TCB_SIZE;	      \
     (((tcbhead_t *) ((char *) tp - TLS_TCB_OFFSET))[-1].tm_capable) =	      \
-      THREAD_GET_TM_CAPABLE ();
+      THREAD_GET_TM_CAPABLE ();						      \
+    (((tcbhead_t *) ((char *) tp - TLS_TCB_OFFSET))[-1].hwcap) =	      \
+      THREAD_GET_HWCAP ();						      \
+    (((tcbhead_t *) ((char *) tp - TLS_TCB_OFFSET))[-1].hwcap2) =	      \
+      THREAD_GET_HWCAP2 ();
 
 /* Return the address of the dtv for the current thread.  */
 # define THREAD_DTV() \
@@ -202,6 +219,32 @@ register void *__thread_register __asm__ ("r13");
 		     - TLS_TCB_OFFSET))[-1].tm_capable)
 # define THREAD_SET_TM_CAPABLE(value) \
     (THREAD_GET_TM_CAPABLE () = (value))
+
+/* hwcap & hwcap2 fields in TCB head.  */
+# define THREAD_GET_HWCAP() \
+    (((tcbhead_t *) ((char *) __thread_register				      \
+		     - TLS_TCB_OFFSET))[-1].hwcap)
+# define THREAD_SET_HWCAP(value) \
+    if (value & PPC_FEATURE_ARCH_2_06)					      \
+      value |= PPC_FEATURE_ARCH_2_05 |					      \
+	       PPC_FEATURE_POWER5_PLUS |				      \
+	       PPC_FEATURE_POWER5 |					      \
+	       PPC_FEATURE_POWER4;					      \
+    else if (value & PPC_FEATURE_ARCH_2_05)				      \
+      value |= PPC_FEATURE_POWER5_PLUS |				      \
+             PPC_FEATURE_POWER5 |					      \
+             PPC_FEATURE_POWER4;					      \
+    else if (value & PPC_FEATURE_POWER5_PLUS)				      \
+      value |= PPC_FEATURE_POWER5 |					      \
+             PPC_FEATURE_POWER4;					      \
+    else if (value & PPC_FEATURE_POWER5)				      \
+      value |= PPC_FEATURE_POWER4;					      \
+    (THREAD_GET_HWCAP () = (value))
+# define THREAD_GET_HWCAP2() \
+    (((tcbhead_t *) ((char *) __thread_register				      \
+                     - TLS_TCB_OFFSET))[-1].hwcap2)
+# define THREAD_SET_HWCAP2(value) \
+    (THREAD_GET_HWCAP2 () = (value))
 
 /* l_tls_offset == 0 is perfectly valid on PPC, so we have to use some
    different value to mean unset l_tls_offset.  */
