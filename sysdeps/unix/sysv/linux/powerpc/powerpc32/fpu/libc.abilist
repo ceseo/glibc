@@ -1985,6 +1985,7 @@ GLIBC_2.2.6
  __nanosleep F
 GLIBC_2.22
  GLIBC_2.22 A
+ ppc_hwcap_tcb F
  fmemopen F
 GLIBC_2.3
  GLIBC_2.3 A

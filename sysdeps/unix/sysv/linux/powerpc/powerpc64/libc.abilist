@@ -93,6 +93,7 @@ GLIBC_2.18
 GLIBC_2.22
  GLIBC_2.22 A
  fmemopen F
+ ppc_hwcap_tcb F
 GLIBC_2.3
  GLIBC_2.3 A
  _Exit F

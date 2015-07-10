@@ -25,5 +25,5 @@ int __ppc_hwcap_tcb (void)
   return 0;
 }
 
-versioned_symbol (libc, __ppc_hwcap_tcb, ppc_hwcap_tcb, GLIBC_2_23);
+versioned_symbol (libc, __ppc_hwcap_tcb, ppc_hwcap_tcb, GLIBC_2_22);
 

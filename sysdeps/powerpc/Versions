@@ -6,7 +6,7 @@ libm {
 }
 
 libc {
-  GLIBC_2.23 {
+  GLIBC_2.22 {
     ppc_hwcap_tcb;
   }
   GLIBC_2.3.4 {
