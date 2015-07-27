@@ -24,18 +24,21 @@
 #include <bits/ppc.h>
 
 
-/* Get the hwcap/hwcap2 information from the TCB. Offsets taken
-   from tcb-offsets.h.  */
+/* Offsets copied from tcb-offsets.h.  */
 
 #ifdef __powerpc64__
 # define __TPREG     "r13"
 # define __HWCAPOFF -28772
 # define __HWCAP2OFF -28776
+# define __ATPLATOFF -28784
 #else
 # define __TPREG     "r2"
 # define __HWCAPOFF -28724
 # define __HWCAP2OFF -28728
+# define __ATPLATOFF -28732
 #endif
+
+/* Get the hwcap/hwcap2 information from the TCB. */
 
 static __inline__ uint32_t
 __ppc_get_hwcap (void)
@@ -65,26 +68,20 @@ __ppc_get_hwcap2 (void)
   return __tcb_hwcap2;
 }
 
-/* Set the hwcap/hwcap2 bits into the designated area in the TCB. This is
-   intended to be used by GCC only.  */
+/* Get the AT_PLATFORM number from the TCB. */
 
-static __inline__ void
-__ppc_set_hwcap (uint32_t __hwcap_mask)
+static __inline__ uint32_t
+__ppc_get_at_platform (void)
 {
+
+  uint32_t __tcb_at_platform;
+
   register unsigned long __tp __asm__ (__TPREG);
-  __asm__ ("stw %0,%1(%2)\n"
-	  :
-	  : "r" (__hwcap_mask), "i" (__HWCAPOFF), "r" (__tp));
-}
+  __asm__  ("lwz %0,%1(%2)\n"
+	    : "=r" (__tcb_at_platform)
+	    : "i" (__ATPLATOFF), "r" (__tp));
 
-static __inline__ void
-__ppc_set_hwcap2 (uint32_t __hwcap2_mask)
-{
-
-register unsigned long __tp __asm__ (__TPREG);
-  __asm__ ("stw %0,%1(%2)\n"
-          :
-          : "r" (__hwcap2_mask), "i" (__HWCAP2OFF), "r" (__tp));
+  return __tcb_at_platform;
 }
 
 /* Read the Time Base Register.   */

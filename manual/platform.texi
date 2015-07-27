@@ -36,24 +36,16 @@ processor.  Those bits are set into the TCB during TLS initialization.
 the TCB, without the overhead of querying the auxiliary vector.
 @end deftypefun
 
-@deftypefun {void} __ppc_set_hwcap (uint32_t __hwcap_mask)
-Writes a Hardware Capability (HWCAP) bit mask to the designated area in the
-the Thread Control Block (TCB).
+@deftypefun {uint32_t} __ppc_get_at_platform (void)
+Read the current value of the platform number from the Thread Control
+Block (TCB).
 
-This function is intended to be used by GCC __builtin_cpu_init() only to set the
-HWCAP bits if necessary.  Do not set the HWCAP bits yourself unless you know what
-you are doing.  Setting a wrong bit mask will break the functionality of 
-@code{__ppc_get_hwcap}.
-@end deftypefun
+The platform number identifies the current processor. It is derived from
+the AT_PLATFORM variable in the auxiliary vector. This value is set into
+the TCB during TLS initialization.
 
-@deftypefun {void} __ppc_set_hwcap2 (uint32_t __hwcap2_mask)
-Writes a Hardware Capability 2 (HWCAP2) bit mask to the designated area in the
-the Thread Control Block (TCB).
-
-This function is intended to be used by GCC __builtin_cpu_init() only to set the
-HWCAP2 bits if necessary.  Do not set the HWCAP2 bits yourself unless you know what
-you are doing.  Setting a wrong bit mask will break the functionality of 
-@code{__ppc_get_hwcap2}.
+@code{__ppc_get_at_platform} reads the value of the platform number directly
+from the TCB, without the overhead of querying the auxiliary vector.
 @end deftypefun
 
 @deftypefun {uint64_t} __ppc_get_timebase (void)

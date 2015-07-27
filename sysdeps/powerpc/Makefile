@@ -4,10 +4,10 @@ endif
 
 ifeq ($(subdir),elf)
 # extra shared linker files to link into dl-allobjs.so and libc
-sysdep-dl-routines += dl-machine
+sysdep-dl-routines += dl-machine hwcapinfo
 sysdep_routines += dl-machine
 # extra shared linker files to link only into dl-allobjs.so
-sysdep-rtld-routines += dl-machine
+sysdep-rtld-routines += dl-machine hwcapinfo
 # Don't optimize GD tls sequence to LE.
 LDFLAGS-tst-tlsopt-powerpc += -Wl,--no-tls-optimize
 tests += tst-tlsopt-powerpc
@@ -24,11 +24,11 @@ ifeq ($(subdir),csu)
 gen-as-const-headers += rtld-global-offsets.sym
 # get offset to __locale_struct.__ctype_tolower
 gen-as-const-headers += locale-defines.sym
+sysdep_routines += hwcapinfo
 endif
 
 ifeq ($(subdir),misc)
 sysdep_headers += sys/platform/ppc.h
-sysdep_routines += ppc_hwcap_tcb
 tests += test-gettimebase test-get_hwcap
 endif
 

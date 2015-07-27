@@ -1,4 +1,5 @@
-/* Copyright (C) 2015 Free Software Foundation, Inc.
+/* powerpc hwcap info.
+   Copyright (C) 2015 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
    The GNU C Library is free software; you can redistribute it and/or
@@ -15,15 +16,17 @@
    License along with the GNU C Library; if not, see
    <http://www.gnu.org/licenses/>.  */
 
-/* Symbol to identify the presence of the HWCAP/HWCAP2 bits in the
-   TCB.  */
+#include <stdint.h>
 
-#include <shlib-compat.h>
+#ifndef HWCAPINFO_H
+# define HWCAPINFO_H
 
-int __ppc_hwcap_tcb (void)
-{
-  return 0;
-}
+extern uint32_t __tcb_hwcap  attribute_hidden;
+extern uint32_t __tcb_hwcap2 attribute_hidden;
+extern uint32_t __tcb_platform attribute_hidden;
+extern uint32_t __tcb_hwcap_init attribute_hidden;
 
-versioned_symbol (libc, __ppc_hwcap_tcb, ppc_hwcap_tcb, GLIBC_2_22);
+extern void __init_hwcapinfo (void);
+
+#endif
 

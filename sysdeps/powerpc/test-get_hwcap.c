@@ -1,4 +1,5 @@
-/* Check __ppc_get_hwcap() and __ppc_set_hwcap() functionality
+/* Check __ppc_get_hwcap(), __ppc_get_hwcap2() and __ppc_get_at_plaftorm()
+   functionality.
    Copyright (C) 2015 Free Software Foundation, Inc.
    This file is part of the GNU C Library.
 
@@ -25,10 +26,31 @@
 #include <sys/auxv.h>
 #include <sys/platform/ppc.h>
 
+#include <dl-procinfo.h>
+
+const char _dl_powerpc_platforms[14][12]
+= {
+    [PPC_PLATFORM_POWER4] = "power4",
+    [PPC_PLATFORM_PPC970] = "ppc970",
+    [PPC_PLATFORM_POWER5] = "power5",
+    [PPC_PLATFORM_POWER5_PLUS] = "power5+",
+    [PPC_PLATFORM_POWER6] = "power6",
+    [PPC_PLATFORM_CELL_BE] = "ppc-cell-be",
+    [PPC_PLATFORM_POWER6X] = "power6x",
+    [PPC_PLATFORM_POWER7] = "power7",
+    [PPC_PLATFORM_PPCA2] = "ppca2",
+    [PPC_PLATFORM_PPC405] = "ppc405",
+    [PPC_PLATFORM_PPC440] = "ppc440",
+    [PPC_PLATFORM_PPC464] = "ppc464",
+    [PPC_PLATFORM_PPC476] = "ppc476",
+    [PPC_PLATFORM_POWER8] = "power8",
+  };
+
 static int
 do_test (void)
 {
-  uint32_t h1, h2, h3, hwcap, hwcap2;
+  uint32_t h1, h2, hwcap, hwcap2, a1, at_platform;
+  const char *at_platform_string;
 
   /* Testing the get function and if the data is correctly initialized by
      TLS_INIT.  */
@@ -40,7 +62,8 @@ do_test (void)
 
   /* hwcap contains only the latest supported ISA, the code checks which is
      and fills the previous supported ones. This is necessary because the
-     same is done in tls.h when setting the values to the TCB.   */
+     same is done in hwcapinfo.c when setting the values that are copied to
+     the TCB.   */
 
   if (hwcap & PPC_FEATURE_ARCH_2_06)
     hwcap |= PPC_FEATURE_ARCH_2_05 | PPC_FEATURE_POWER5_PLUS |
@@ -64,30 +87,17 @@ do_test (void)
       return 1;
     }
 
-  /* Testing the set functions.  */
+  at_platform_string = (const char *) getauxval (AT_PLATFORM);
+  a1 = __ppc_get_at_platform ();
+  at_platform = _dl_string_platform (at_platform_string);
 
-  h3 = 0xDEADBEEF;
-
-  __ppc_set_hwcap(h3);
-  __ppc_set_hwcap2(h3);
-
-  hwcap = __ppc_get_hwcap();
-  hwcap2 = __ppc_get_hwcap2();
-
-  if ( h3 != hwcap )
+  if ( a1 != at_platform )
     {
-      printf("Fail: __ppc_set_hwcap() - HWCAP is %x. Should be %x\n", h3, hwcap);
+      printf("Fail: __ppc_get_at_platform() - AT_PLATFORM is %x. Should be %x\n", a1, at_platform);
       return 1;
     }
 
-  if ( h3 != hwcap2 )
-    {
-      printf("Fail: __ppc_set_hwcap2() - HWCAP2 is %x. Should be %x\n", h3, hwcap2);
-      return 1;
-    }
-
-
-  printf("Pass: HWCAP and HWCAP2 are correctly set in the TCB.\n");
+  printf("Pass: HWCAP, HWCAP2 and AT_PLATFORM are correctly set in the TCB.\n");
 
   return 0;
 

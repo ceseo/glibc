@@ -6,8 +6,8 @@ libm {
 }
 
 libc {
-  GLIBC_2.22 {
-    ppc_hwcap_tcb;
+  GLIBC_2.23 {
+    init_hwcapinfo;
   }
   GLIBC_2.3.4 {
     _longjmp; __sigsetjmp; _setjmp;
