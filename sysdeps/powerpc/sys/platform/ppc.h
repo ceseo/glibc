@@ -28,7 +28,7 @@
 
 #ifdef __powerpc64__
 # define __TPREG     "r13"
-# define __HWCAPOFF -28772
+# define __HWCAPOFF -28776
 # define __ATPLATOFF -28764
 #else
 # define __TPREG     "r2"

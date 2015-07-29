@@ -74,7 +74,7 @@ typedef struct
 #endif
   /* Reservation for HWCAP data. To be accessed by GCC in
      __builtin_cpu_supports(), so it is a part of public ABI.  */
-  unsigned int hwcap;
+  uint64_t hwcap;
   /* Indicate if HTM capable (ISA 2.07).  */
   int tm_capable;
   /* Reservation for AT_PLATFORM data - powerpc64.  */
