@@ -21,8 +21,7 @@
 #ifndef HWCAPINFO_H
 # define HWCAPINFO_H
 
-extern uint32_t __tcb_hwcap  attribute_hidden;
-extern uint32_t __tcb_hwcap2 attribute_hidden;
+extern uint64_t __tcb_hwcap  attribute_hidden;
 extern uint32_t __tcb_platform attribute_hidden;
 extern uint32_t __tcb_hwcap_init attribute_hidden;
 

@@ -29,43 +29,27 @@
 #ifdef __powerpc64__
 # define __TPREG     "r13"
 # define __HWCAPOFF -28772
-# define __HWCAP2OFF -28776
-# define __ATPLATOFF -28784
+# define __ATPLATOFF -28764
 #else
 # define __TPREG     "r2"
 # define __HWCAPOFF -28724
-# define __HWCAP2OFF -28728
 # define __ATPLATOFF -28732
 #endif
 
 /* Get the hwcap/hwcap2 information from the TCB. */
 
-static __inline__ uint32_t
+static __inline__ uint64_t
 __ppc_get_hwcap (void)
 {
 
-  uint32_t __tcb_hwcap;
+  uint64_t __tcb_hwcap;
 
   register unsigned long __tp __asm__ (__TPREG);
-  __asm__  ("lwz %0,%1(%2)\n"
+  __asm__  ("ld %0,%1(%2)\n"
 	    : "=r" (__tcb_hwcap)
 	    : "i" (__HWCAPOFF), "r" (__tp));
 
   return __tcb_hwcap;
-}
-
-static __inline__ uint32_t
-__ppc_get_hwcap2 (void)
-{
-
-  uint32_t __tcb_hwcap2;
-
-  register unsigned long __tp __asm__ (__TPREG);
-  __asm__ ("lwz %0,%1(%2)\n"
-          : "=r" (__tcb_hwcap2)
-          : "i" (__HWCAP2OFF), "r" (__tp));
-
-  return __tcb_hwcap2;
 }
 
 /* Get the AT_PLATFORM number from the TCB. */

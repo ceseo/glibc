@@ -14,25 +14,16 @@
 Facilities specific to PowerPC that are not specific to a particular
 operating system are declared in @file{sys/platform/ppc.h}.
 
-@deftypefun {uint32_t} __ppc_get_hwcap (void)
-Read the current value of the Hardware Capability (HWCAP) bits from the
-Thread Control Block (TCB).
+@deftypefun {uint64_t} __ppc_get_hwcap (void)
+Read the current value of the Hardware Capability (HWCAP) and HWCAP2
+bits from the Thread Control Block (TCB). The result returned is a single
+doubleword containing the HWCAP value in the 32 high-order bits and the
+HWCAP2 value in the lower 32 bits.
 
-The HWCAP bits state the hardware features available in the current
+The HWCAP/HWCAP2 bits state the hardware features available in the current
 processor.  Those bits are set into the TCB during TLS initialization.
 
-@code{__ppc_get_hwcap} reads the value of the HWCAP bits directly from
-the TCB, without the overhead of querying the auxiliary vector.
-@end deftypefun
-
-@deftypefun {uint32_t} __ppc_get_hwcap2 (void)
-Read the current value of the Hardware Capability 2 (HWCAP2) bits from the
-Thread Control Block (TCB).
-
-The HWCAP2 bits state the hardware features available in the current
-processor.  Those bits are set into the TCB during TLS initialization.
-
-@code{__ppc_get_hwcap2} reads the value of the HWCAP2 bits directly from
+@code{__ppc_get_hwcap} reads the value of the HWCAP/HWCAP bits directly from
 the TCB, without the overhead of querying the auxiliary vector.
 @end deftypefun
 

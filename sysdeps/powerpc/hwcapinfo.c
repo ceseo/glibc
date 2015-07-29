@@ -21,38 +21,45 @@
 #include <dl-procinfo.h>
 #include <ldsodefs.h>
 
-uint32_t __tcb_hwcap __attribute__ ((visibility ("hidden")));
-uint32_t __tcb_hwcap2 __attribute__ ((visibility ("hidden")));
+uint64_t __tcb_hwcap __attribute__ ((visibility ("hidden")));
 uint32_t __tcb_platform __attribute__ ((visibility ("hidden")));
 uint32_t __tcb_hwcap_init __attribute__ ((visibility ("hidden")));
 
 void
 __init_hwcapinfo (void)
 {
-  /* Find out what kind of processor.  */
+
+  uint64_t h1, h2;
+
+  /* Read AT_PLATFORM string from auxv.  */
   __tcb_platform = _dl_string_platform (GLRO(dl_platform));
 
-  /* Find out the capabilities of processor.  */
-  __tcb_hwcap = GLRO(dl_hwcap);
-  __tcb_hwcap2 = GLRO(dl_hwcap2);
+  /* Read HWCAP and HWCAP2 from auxv.  */
+  h1 = GLRO(dl_hwcap);
+  h2 = GLRO(dl_hwcap2);
 
   /* hwcap contains only the latest supported ISA, the code checks which is
      and fills the previous supported ones.  */
 
-  if (__tcb_hwcap & PPC_FEATURE_ARCH_2_06)	      \
-      __tcb_hwcap |= PPC_FEATURE_ARCH_2_05 |	      \
-		  PPC_FEATURE_POWER5_PLUS |	      \
-		  PPC_FEATURE_POWER5 |		      \
-		  PPC_FEATURE_POWER4;		      \
-    else if (__tcb_hwcap & PPC_FEATURE_ARCH_2_05)     \
-      __tcb_hwcap |= PPC_FEATURE_POWER5_PLUS |	      \
-             PPC_FEATURE_POWER5 |		      \
-             PPC_FEATURE_POWER4;		      \
-    else if (__tcb_hwcap & PPC_FEATURE_POWER5_PLUS)   \
-      __tcb_hwcap |= PPC_FEATURE_POWER5 |	      \
-             PPC_FEATURE_POWER4;		      \
-    else if (__tcb_hwcap & PPC_FEATURE_POWER5)	      \
-      __tcb_hwcap |= PPC_FEATURE_POWER4;	      \
+  if (h1 & PPC_FEATURE_ARCH_2_06)
+      h1 |= PPC_FEATURE_ARCH_2_05 |	      \
+		  PPC_FEATURE_POWER5_PLUS |   \
+		  PPC_FEATURE_POWER5 |	      \
+		  PPC_FEATURE_POWER4;
+    else if (h1 & PPC_FEATURE_ARCH_2_05)
+      h1 |= PPC_FEATURE_POWER5_PLUS |	      \
+             PPC_FEATURE_POWER5 |	      \
+             PPC_FEATURE_POWER4;
+    else if (h1 & PPC_FEATURE_POWER5_PLUS)
+      h1 |= PPC_FEATURE_POWER5 |	      \
+             PPC_FEATURE_POWER4;
+    else if (h1 & PPC_FEATURE_POWER5)
+      h1|= PPC_FEATURE_POWER4;
+
+  /* Consolidate both HWCAP and HWCAP2 into a single doubleword so that
+     we can read both in a single load later.  */
+  __tcb_hwcap = h2;
+  __tcb_hwcap = (h1 << 32) + __tcb_hwcap;
 
   __tcb_hwcap_init = 1;
 

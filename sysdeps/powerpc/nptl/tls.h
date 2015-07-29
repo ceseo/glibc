@@ -66,23 +66,20 @@ typedef union dtv
 typedef struct
 {
   /* Reservation for AT_PLATFORM data. To be accessed by GCC in
-     __builtin_cpu_is() and __builtin_cpu_init(), so it is a
-     part of public ABI.  */
+     __builtin_cpu_is(), so it is a part of public ABI. Since there
+     are different ABIs for 32 and 64 bit, we put this field in a
+     previously empty padding space for powerpc64.  */
+#ifndef __powerpc64__
   unsigned int at_platform;
-  /* Padding to preserve alignment.  */
-#ifdef __powerpc64__
-  int padding2;
 #endif
   /* Reservation for HWCAP data. To be accessed by GCC in
-     __builtin_cpu_supports() and __builtin_cpu_init(),
-     so it is a part of public ABI.  */
-  unsigned int hwcap2;
+     __builtin_cpu_supports(), so it is a part of public ABI.  */
   unsigned int hwcap;
   /* Indicate if HTM capable (ISA 2.07).  */
   int tm_capable;
-  /* Padding to preserve alignment.  */
+  /* Reservation for AT_PLATFORM data - powerpc64.  */
 #ifdef __powerpc64__
-  int padding1;
+  unsigned int at_platform;
 #endif
   /* Reservation for Dynamic System Optimizer ABI.  */
   uintptr_t dso_slot2;
@@ -155,9 +152,8 @@ register void *__thread_register __asm__ ("r13");
     __thread_register = (void *) (tcbp) + TLS_TCB_OFFSET;		      \
     if (!__tcb_hwcap_init)						      \
       __init_hwcapinfo();						      \
-    THREAD_SET_TM_CAPABLE (__tcb_hwcap2 & PPC_FEATURE2_HAS_HTM ? 1 : 0);      \
+    THREAD_SET_TM_CAPABLE (__tcb_hwcap & PPC_FEATURE2_HAS_HTM ? 1 : 0);	      \
     THREAD_SET_HWCAP (__tcb_hwcap);					      \
-    THREAD_SET_HWCAP2 (__tcb_hwcap2);					      \
     THREAD_SET_AT_PLATFORM (__tcb_platform);				      \
     NULL;								      \
   })
@@ -169,8 +165,6 @@ register void *__thread_register __asm__ ("r13");
       THREAD_GET_TM_CAPABLE ();						      \
     (((tcbhead_t *) ((char *) tp - TLS_TCB_OFFSET))[-1].hwcap) =	      \
       THREAD_GET_HWCAP ();						      \
-    (((tcbhead_t *) ((char *) tp - TLS_TCB_OFFSET))[-1].hwcap2) =	      \
-      THREAD_GET_HWCAP2 ();						      \
     (((tcbhead_t *) ((char *) tp - TLS_TCB_OFFSET))[-1].at_platform) =	      \
       THREAD_GET_AT_PLATFORM ();
 
@@ -233,17 +227,12 @@ register void *__thread_register __asm__ ("r13");
 # define THREAD_SET_TM_CAPABLE(value) \
     (THREAD_GET_TM_CAPABLE () = (value))
 
-/* hwcap & hwcap2 fields in TCB head.  */
+/* hwcap field in TCB head.  */
 # define THREAD_GET_HWCAP() \
     (((tcbhead_t *) ((char *) __thread_register				      \
 		     - TLS_TCB_OFFSET))[-1].hwcap)
 # define THREAD_SET_HWCAP(value) \
     (THREAD_GET_HWCAP () = (value))
-# define THREAD_GET_HWCAP2() \
-    (((tcbhead_t *) ((char *) __thread_register				      \
-                     - TLS_TCB_OFFSET))[-1].hwcap2)
-# define THREAD_SET_HWCAP2(value) \
-    (THREAD_GET_HWCAP2 () = (value))
 
 /* at_platform field in TCB head.  */
 # define THREAD_GET_AT_PLATFORM() \

@@ -49,14 +49,14 @@ const char _dl_powerpc_platforms[14][12]
 static int
 do_test (void)
 {
-  uint32_t h1, h2, hwcap, hwcap2, a1, at_platform;
+  uint32_t a1, at_platform;
+  uint64_t h1, h2, hwcap, hwcap2;
   const char *at_platform_string;
 
   /* Testing the get function and if the data is correctly initialized by
      TLS_INIT.  */
 
   h1 = __ppc_get_hwcap ();
-  h2 = __ppc_get_hwcap2 ();
   hwcap = getauxval(AT_HWCAP);
   hwcap2 = getauxval(AT_HWCAP2);
 
@@ -75,15 +75,11 @@ do_test (void)
   else if (hwcap & PPC_FEATURE_POWER5)
     hwcap |= PPC_FEATURE_POWER4;
 
-  if ( h1 != hwcap )
-    {
-      printf("Fail: __ppc_get_hwcap() - HWCAP is %x. Should be %x\n", h1, hwcap);
-      return 1;
-    }
+  h2 = (hwcap << 32) + hwcap2;
 
-  if ( h2 != hwcap2 )
+  if ( h1 != h2 )
     {
-      printf("Fail: __ppc_get_hwcap2() - HWCAP2 is %x. Should be %x\n", h2, hwcap2);
+      printf("Fail: __ppc_get_hwcap() - HWCAP is %lx. Should be %lx\n", h1, h2);
       return 1;
     }
 
