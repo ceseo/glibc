@@ -79,7 +79,7 @@ do_test (void)
 
   if ( h1 != h2 )
     {
-      printf("Fail: __ppc_get_hwcap() - HWCAP is %" PRIx64 ". Should be %" PRIx64 ".", h1, h2);
+      printf("Fail: __ppc_get_hwcap() - HWCAP is %" PRIx64 ". Should be %" PRIx64 ".\n", h1, h2);
       return 1;
     }
 

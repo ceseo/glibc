@@ -19,7 +19,6 @@
 #include <unistd.h>
 #include <shlib-compat.h>
 #include <dl-procinfo.h>
-#include <ldsodefs.h>
 
 uint64_t __tcb_hwcap __attribute__ ((visibility ("hidden")));
 uint32_t __tcb_platform __attribute__ ((visibility ("hidden")));
@@ -59,7 +58,7 @@ __init_hwcapinfo (void)
   /* Consolidate both HWCAP and HWCAP2 into a single doubleword so that
      we can read both in a single load later.  */
   __tcb_hwcap = h2;
-  __tcb_hwcap = (h1 << 32) + __tcb_hwcap;
+  __tcb_hwcap = (h1 << 32) | __tcb_hwcap;
 
   __tcb_hwcap_init = 1;
 

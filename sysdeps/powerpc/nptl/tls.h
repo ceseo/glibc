@@ -65,21 +65,23 @@ typedef union dtv
    are private.  */
 typedef struct
 {
+  /* Reservation for HWCAP data. To be accessed by GCC in
+     __builtin_cpu_supports(), so it is a part of public ABI.  */
+  uint64_t hwcap;
   /* Reservation for AT_PLATFORM data. To be accessed by GCC in
      __builtin_cpu_is(), so it is a part of public ABI. Since there
      are different ABIs for 32 and 64 bit, we put this field in a
      previously empty padding space for powerpc64.  */
 #ifndef __powerpc64__
-  unsigned int at_platform;
+  /* Padding to maintain alignment.  */
+  uint32_t padding;
+  uint32_t at_platform;
 #endif
-  /* Reservation for HWCAP data. To be accessed by GCC in
-     __builtin_cpu_supports(), so it is a part of public ABI.  */
-  uint64_t hwcap;
   /* Indicate if HTM capable (ISA 2.07).  */
-  int tm_capable;
+  uint32_t tm_capable;
   /* Reservation for AT_PLATFORM data - powerpc64.  */
 #ifdef __powerpc64__
-  unsigned int at_platform;
+  uint32_t at_platform;
 #endif
   /* Reservation for Dynamic System Optimizer ABI.  */
   uintptr_t dso_slot2;
