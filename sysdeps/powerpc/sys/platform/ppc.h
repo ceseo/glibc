@@ -23,6 +23,64 @@
 #include <stdint.h>
 #include <bits/ppc.h>
 
+
+/* Offsets copied from tcb-offsets.h.  */
+
+#ifdef __powerpc64__
+# define __TPREG     "r13"
+# define __HWCAPOFF -28776
+# define __ATPLATOFF -28764
+#else
+# define __TPREG     "r2"
+# define __HWCAPOFF -28736
+# define __HWCAP2OFF -28732
+# define __ATPLATOFF -28724
+#endif
+
+/* Get the hwcap/hwcap2 information from the TCB.  */
+
+static __inline__ uint64_t
+__ppc_get_hwcap (void)
+{
+
+  uint64_t __tcb_hwcap;
+
+  register unsigned long __tp __asm__ (__TPREG);
+#ifdef __powerpc64__
+  __asm__  ("ld %0,%1(%2)\n"
+	    : "=r" (__tcb_hwcap)
+	    : "i" (__HWCAPOFF), "r" (__tp));
+#else
+  uint64_t h1, h2;
+
+  __asm__ ("lwz %0,%1(%2)\n"
+      : "=r" (h1)
+      : "i" (__HWCAPOFF), "r" (__tp));
+  __asm__ ("lwz %0,%1(%2)\n"
+      : "=r" (h2)
+      : "i" (__HWCAP2OFF), "r" (__tp));
+  __tcb_hwcap = (h1 >> 32) << 32 | (h2 >> 32);
+#endif
+
+  return __tcb_hwcap;
+}
+
+/* Get the AT_PLATFORM number from the TCB.  */
+
+static __inline__ uint32_t
+__ppc_get_at_platform (void)
+{
+
+  uint32_t __tcb_at_platform;
+
+  register unsigned long __tp __asm__ (__TPREG);
+  __asm__  ("lwz %0,%1(%2)\n"
+	    : "=r" (__tcb_at_platform)
+	    : "i" (__ATPLATOFF), "r" (__tp));
+
+  return __tcb_at_platform;
+}
+
 /* Read the Time Base Register.   */
 static inline uint64_t
 __ppc_get_timebase (void)
