@@ -16,7 +16,7 @@ operating system are declared in @file{sys/platform/ppc.h}.
 
 @deftypefun {uint64_t} __ppc_get_hwcap (void)
 Read the current value of the Hardware Capability (HWCAP) and HWCAP2
-bits from the Thread Control Block (TCB). The result returned is a single
+bits from the Thread Control Block (TCB).  The result returned is a single
 doubleword containing the HWCAP value in the 32 high-order bits and the
 HWCAP2 value in the lower 32 bits.
 
@@ -31,8 +31,8 @@ the TCB, without the overhead of querying the auxiliary vector.
 Read the current value of the platform number from the Thread Control
 Block (TCB).
 
-The platform number identifies the current processor. It is derived from
-the AT_PLATFORM variable in the auxiliary vector. This value is set into
+The platform number identifies the current processor.  It is derived from
+the AT_PLATFORM variable in the auxiliary vector.  This value is set into
 the TCB during TLS initialization.
 
 @code{__ppc_get_at_platform} reads the value of the platform number directly

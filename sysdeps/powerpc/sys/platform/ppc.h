@@ -37,7 +37,7 @@
 # define __ATPLATOFF -28724
 #endif
 
-/* Get the hwcap/hwcap2 information from the TCB. */
+/* Get the hwcap/hwcap2 information from the TCB.  */
 
 static __inline__ uint64_t
 __ppc_get_hwcap (void)
@@ -65,7 +65,7 @@ __ppc_get_hwcap (void)
   return __tcb_hwcap;
 }
 
-/* Get the AT_PLATFORM number from the TCB. */
+/* Get the AT_PLATFORM number from the TCB.  */
 
 static __inline__ uint32_t
 __ppc_get_at_platform (void)

@@ -61,9 +61,9 @@ do_test (void)
   hwcap2 = getauxval(AT_HWCAP2);
 
   /* hwcap contains only the latest supported ISA, the code checks which is
-     and fills the previous supported ones. This is necessary because the
+     and fills the previous supported ones.  This is necessary because the
      same is done in hwcapinfo.c when setting the values that are copied to
-     the TCB.   */
+     the TCB.  */
 
   if (hwcap & PPC_FEATURE_ARCH_2_06)
     hwcap |= PPC_FEATURE_ARCH_2_05 | PPC_FEATURE_POWER5_PLUS |
