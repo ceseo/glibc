@@ -23,7 +23,7 @@ HWCAP2 value in the lower 32 bits.
 The HWCAP/HWCAP2 bits state the hardware features available in the current
 processor.  Those bits are set into the TCB during TLS initialization.
 
-@code{__ppc_get_hwcap} reads the value of the HWCAP/HWCAP bits directly from
+@code{__ppc_get_hwcap} reads the value of the HWCAP/HWCAP2 bits directly from
 the TCB, without the overhead of querying the auxiliary vector.
 @end deftypefun
 
