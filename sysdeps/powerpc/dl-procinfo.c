@@ -62,7 +62,7 @@ PROCINFO_CLASS const char _dl_powerpc_cap_flags[57][10]
     "", "", "", "",
     "", "", "", "",
     "", "", "", "",
-    "", "", "tar", "isel",
+    "htm_nosc", "", "tar", "isel",
     "ebb", "dscr", "htm", "arch_2_07",
   }
 #endif
