@@ -197,7 +197,7 @@ gen-calls = s_ldexpF
 generated += $(foreach s,.c .S,$(call type-foreach, $(calls:s_%=m_%$(s))))
 routines = $(call type-foreach, $(calls))
 
-ifeq ($(build-mathvec),yes)
+ifeq ($(build-mathvec)$(build-shared),yesyes)
 # We need to install libm.so and libm.a as linker scripts
 # for transparent use of vector math library.
 install-lib-ldscripts := libm.so libm.a
@@ -233,7 +233,7 @@ tests = test-matherr-3 test-fenv basic-test \
 	test-misc test-fpucw test-fpucw-ieee tst-definitions test-tgmath \
 	test-tgmath-ret bug-nextafter bug-nexttoward bug-tgmath1 \
 	test-tgmath-int test-tgmath2 test-powl tst-CMPLX tst-CMPLX2 test-snan \
-	test-fenv-tls test-fenv-preserve test-fenv-return \
+	test-fenv-preserve test-fenv-return \
 	test-nearbyint-except test-fenv-clear \
 	test-nearbyint-except-2 test-signgam-uchar test-signgam-uchar-init \
 	test-signgam-uint test-signgam-uint-init test-signgam-ullong \
@@ -761,4 +761,7 @@ endef
 object-suffixes-left := $(libmvec-tests)
 include $(o-iterator)
 
+ifeq ($(run-built-tests),yes)
+tests += test-fenv-tls
 $(objpfx)test-fenv-tls: $(shared-thread-library)
+endif

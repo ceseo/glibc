@@ -15,7 +15,7 @@ gen-as-const-headers += sigaltstack-offsets.sym
 endif
 
 ifeq ($(subdir),elf)
-ifeq (yes,$(enable-x86-isa-level))
+ifeq (yesyes,$(enable-x86-isa-level)$(build-shared))
 tests += \
   tst-glibc-hwcaps-2
 ifeq (no,$(build-hardcoded-path-in-tests))

@@ -5,12 +5,12 @@
 # error "nldbl-abi.h must define LONG_DOUBLE_COMPAT_VERSION"
 #endif
 
+#ifdef SHARED
 #include <shlib-compat.h>
 #define LONG_DOUBLE_COMPAT(lib, introduced) \
   SHLIB_COMPAT(lib, introduced, LONG_DOUBLE_COMPAT_VERSION)
 #define long_double_symbol(lib, local, symbol) \
   long_double_symbol_1 (lib, local, symbol, LONG_DOUBLE_COMPAT_VERSION)
-#ifdef SHARED
 # define ldbl_hidden_def(local, name) libc_hidden_ver (local, name)
 # define ldbl_strong_alias(name, aliasname) \
   strong_alias (name, __GL_##name##_##aliasname) \

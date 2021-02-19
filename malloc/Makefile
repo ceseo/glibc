@@ -28,17 +28,10 @@ tests := mallocbug tst-malloc tst-valloc tst-calloc tst-obstack \
 	 tst-mcheck tst-mallocfork tst-trim1 \
 	 tst-malloc-usable tst-realloc tst-reallocarray tst-posix_memalign \
 	 tst-pvalloc tst-pvalloc-fortify tst-memalign tst-mallopt \
-	 tst-malloc-backtrace tst-malloc-thread-exit \
-	 tst-malloc-thread-fail tst-malloc-fork-deadlock \
-	 tst-mallocfork2 \
-	 tst-interpose-nothread \
-	 tst-interpose-thread \
 	 tst-alloc_buffer \
 	 tst-free-errno \
-	 tst-malloc-tcache-leak \
-	 tst-malloc_info tst-mallinfo2 \
+	 tst-mallinfo2 \
 	 tst-malloc-too-large \
-	 tst-malloc-stats-cancellation \
 	 tst-tcfree1 tst-tcfree2 tst-tcfree3 \
 	 tst-safe-linking \
 
@@ -107,6 +100,7 @@ test-extras = \
 libmemusage-routines = memusage
 libmemusage-inhibit-o = $(filter-out .os,$(object-suffixes))
 
+ifeq ($(build-shared),yes)
 $(objpfx)tst-malloc-backtrace: $(shared-thread-library)
 $(objpfx)tst-malloc-thread-exit: $(shared-thread-library)
 $(objpfx)tst-malloc-thread-fail: $(shared-thread-library)
@@ -117,6 +111,7 @@ $(objpfx)tst-malloc-thread-exit-mcheck: $(shared-thread-library)
 $(objpfx)tst-malloc-thread-fail-mcheck: $(shared-thread-library)
 $(objpfx)tst-malloc-fork-deadlock-mcheck: $(shared-thread-library)
 $(objpfx)tst-malloc-stats-cancellation-mcheck: $(shared-thread-library)
+endif
 
 # Export the __malloc_initialize_hook variable to libc.so.
 LDFLAGS-tst-mallocstate = -rdynamic
@@ -253,11 +248,16 @@ $(foreach o,$(all-object-suffixes),$(objpfx)malloc$(o)): arena.c hooks.c
 # the test skeleton.
 $(tests:%=$(objpfx)%.o): CPPFLAGS += -DTEST_NO_MALLOPT
 
+ifeq ($(build-shared),yes)
+tests += \
+  tst-interpose-nothread \
+  tst-interpose-thread
 $(objpfx)tst-interpose-nothread: $(objpfx)tst-interpose-aux-nothread.o
 $(objpfx)tst-interpose-thread: \
   $(objpfx)tst-interpose-aux-thread.o $(shared-thread-library)
 $(objpfx)tst-interpose-thread-mcheck: \
   $(objpfx)tst-interpose-aux-thread.o $(shared-thread-library)
+endif
 $(objpfx)tst-interpose-static-nothread: $(objpfx)tst-interpose-aux-nothread.o
 $(objpfx)tst-interpose-static-thread: \
   $(objpfx)tst-interpose-aux-thread.o $(static-thread-library)
@@ -272,9 +272,11 @@ $(objpfx)tst-dynarray-fail-mem.out: $(objpfx)tst-dynarray-fail.out
 	$(common-objpfx)malloc/mtrace $(objpfx)tst-dynarray-fail.mtrace > $@; \
 	$(evaluate-test)
 
+ifeq ($(build-shared),yes)
 $(objpfx)tst-malloc-tcache-leak: $(shared-thread-library)
 $(objpfx)tst-malloc_info: $(shared-thread-library)
 $(objpfx)tst-mallocfork2: $(shared-thread-library)
 $(objpfx)tst-malloc-tcache-leak-mcheck: $(shared-thread-library)
 $(objpfx)tst-malloc_info-mcheck: $(shared-thread-library)
 $(objpfx)tst-mallocfork2-mcheck: $(shared-thread-library)
+endif

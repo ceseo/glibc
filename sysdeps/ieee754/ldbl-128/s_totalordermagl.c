@@ -22,7 +22,6 @@
 #include <nan-high-order-bit.h>
 #include <stdint.h>
 #include <shlib-compat.h>
-#include <first-versions.h>
 
 int
 __totalordermagl (const _Float128 *x, const _Float128 *y)
@@ -62,6 +61,7 @@ __totalordermagl (const _Float128 *x, const _Float128 *y)
 #endif
 libm_alias_ldouble (__totalordermag, totalordermag)
 #if SHLIB_COMPAT (libm, GLIBC_2_25, GLIBC_2_31)
+# include <first-versions.h>
 int
 attribute_compat_text_section
 __totalordermag_compatl (_Float128 x, _Float128 y)

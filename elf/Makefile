@@ -183,9 +183,11 @@ ifeq (no,$(build-hardcoded-path-in-tests))
 tests-container += tst-glibc-hwcaps-prepend-cache
 endif
 
+ifeq ($(build-shared),yes)
 tests := tst-tls9 tst-leaks1 \
 	tst-array1 tst-array2 tst-array3 tst-array4 tst-array5 \
 	tst-auxv tst-stringtable
+endif
 tests-internal := tst-tls1 tst-tls2 $(tests-static-internal)
 tests-static := $(tests-static-normal) $(tests-static-internal)
 
@@ -353,14 +355,14 @@ modules-names = testobj1 testobj2 testobj3 testobj4 testobj5 testobj6 \
 modules-names-tests = $(filter-out ifuncmod% tst-libc_dlvsym-dso tst-tlsmod%,\
 				   $(modules-names))
 
-ifeq (yes,$(have-mtls-dialect-gnu2))
+ifeq (yesyes,$(have-mtls-dialect-gnu2)$(build-shared))
 tests += tst-gnu2-tls1
 modules-names += tst-gnu2-tls1mod
 $(objpfx)tst-gnu2-tls1: $(objpfx)tst-gnu2-tls1mod.so
 tst-gnu2-tls1mod.so-no-z-defs = yes
 CFLAGS-tst-gnu2-tls1mod.c += -mtls-dialect=gnu2
 endif
-ifeq (yes,$(have-protected-data))
+ifeq (yesyes,$(have-protected-data)$(build-shared))
 modules-names += tst-protected1moda tst-protected1modb
 tests += tst-protected1a tst-protected1b
 $(objpfx)tst-protected1a: $(addprefix $(objpfx),tst-protected1moda.so tst-protected1modb.so)
@@ -432,7 +434,10 @@ endif
 ifeq (yes,$(build-shared))
 ifeq ($(run-built-tests),yes)
 tests-special += $(objpfx)tst-pathopt.out $(objpfx)tst-rtld-load-self.out \
-		 $(objpfx)tst-rtld-preload.out $(objpfx)argv0test.out
+		 $(objpfx)tst-rtld-preload.out $(objpfx)argv0test.out \
+		 $(objpfx)tst-array1-cmp.out \
+                 $(objpfx)tst-array2-cmp.out $(objpfx)tst-array3-cmp.out \
+                 $(objpfx)tst-array4-cmp.out $(objpfx)tst-array5-cmp.out
 endif
 tests-special += $(objpfx)check-textrel.out $(objpfx)check-execstack.out \
 		 $(objpfx)check-wx-segment.out \
@@ -440,20 +445,19 @@ tests-special += $(objpfx)check-textrel.out $(objpfx)check-execstack.out \
 endif
 
 ifeq ($(run-built-tests),yes)
-tests-special += $(objpfx)order-cmp.out $(objpfx)tst-array1-cmp.out \
-		 $(objpfx)tst-array1-static-cmp.out \
-		 $(objpfx)tst-array2-cmp.out $(objpfx)tst-array3-cmp.out \
-		 $(objpfx)tst-array4-cmp.out $(objpfx)tst-array5-cmp.out \
+tests-special += $(objpfx)order-cmp.out $(objpfx)tst-array1-static-cmp.out \
 		 $(objpfx)tst-array5-static-cmp.out $(objpfx)order2-cmp.out \
 		 $(objpfx)tst-initorder-cmp.out \
 		 $(objpfx)tst-initorder2-cmp.out $(objpfx)tst-unused-dep.out \
 		 $(objpfx)tst-unused-dep-cmp.out
 endif
 
+ifeq (yes,$(build-shared))
 check-abi: $(objpfx)check-abi-ld.out
 tests-special += $(objpfx)check-abi-ld.out
 update-abi: update-abi-ld
 update-all-abi: update-all-abi-ld
+endif
 
 ifeq ($(have-glob-dat-reloc),yes)
 tests += tst-prelink

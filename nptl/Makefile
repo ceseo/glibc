@@ -346,12 +346,10 @@ tests = tst-attr2 tst-attr3 tst-default-attr \
 	tst-tsd3 tst-tsd4 \
 	tst-cancel4_1 tst-cancel4_2 \
 	tst-cancel7 tst-cancel17 tst-cancel24 \
-	tst-cleanup4 \
 	tst-signal3 \
 	tst-exec4 tst-exec5 \
-	tst-stack2 tst-stack3 tst-stack4 \
+	tst-stack2 tst-stack3 \
 	tst-pthread-attr-affinity \
-	tst-dlsym1 \
 	tst-context1 \
 	tst-sched1 \
 	tst-initializers1 $(addprefix tst-initializers1-,\
@@ -368,13 +366,16 @@ tests = tst-attr2 tst-attr3 tst-default-attr \
 	tst-pthread-attr-sigmask \
 	tst-pthread-timedlock-lockloop
 
+# FIXME
+ifeq ($(build-shared),yes)
 tests-container =  tst-pthread-getattr
 
 tests-internal := tst-robustpi8 tst-rwlock19 tst-rwlock20 \
 		  tst-sem11 tst-sem12 tst-sem13 \
 		  tst-barrier5 tst-signal7 tst-mutex8 tst-mutex8-static \
 		  tst-mutexpi8 tst-mutexpi8-static \
-		  tst-setgetname \
+		  tst-setgetname
+endif
 
 xtests = tst-setuid1 tst-setuid1-static tst-setuid2 \
 	tst-mutexpp1 tst-mutexpp6 tst-mutexpp10 tst-setgroups \
@@ -424,7 +425,7 @@ endif
 
 LDFLAGS-pthread.so = -Wl,--enable-new-dtags,-z,nodelete,-z,initfirst
 
-tests += tst-cancelx7 tst-cancelx17 tst-cleanupx4
+tests += tst-cancelx7 tst-cancelx17
 
 ifeq ($(build-shared),yes)
 tests += tst-compat-forwarder tst-audit-threads
@@ -491,7 +492,9 @@ tests-static += tst-stackguard1-static \
 
 tests += tst-cancel24-static
 
+ifeq ($(build-shared),yes)
 tests-internal += tst-sem11-static tst-sem12-static tst-stackguard1-static
+endif
 xtests-static += tst-setuid1-static
 
 ifeq ($(run-built-tests),yes)
@@ -551,6 +554,13 @@ $(objpfx)tst-stack3-mem.out: $(objpfx)tst-stack3.out
 	$(evaluate-test)
 generated += tst-stack3-mem.out tst-stack3.mtrace
 
+ifeq ($(build-shared),yes)
+tests += \
+  tst-stack4 \
+  tst-cleanup4 \
+  tst-cleanupx4 \
+  tst-dlsym1
+
 $(objpfx)tst-stack4: $(libdl) $(shared-thread-library)
 tst-stack4mod.sos=$(shell for i in 0 1 2 3 4 5 6 7 8 9 10 \
 				   11 12 13 14 15 16 17 18 19; do \
@@ -566,6 +576,7 @@ clean:
 
 $(objpfx)tst-cleanup4: $(objpfx)tst-cleanup4aux.o $(shared-thread-library)
 $(objpfx)tst-cleanupx4: $(objpfx)tst-cleanupx4aux.o $(shared-thread-library)
+endif
 
 $(objpfx)tst-tls3: $(libdl) $(shared-thread-library)
 LDFLAGS-tst-tls3 = -rdynamic
@@ -588,9 +599,9 @@ $(objpfx)tst-tls6.out: tst-tls6.sh $(objpfx)tst-tls5 \
 	$(BASH) $< $(common-objpfx) '$(test-via-rtld-prefix)' \
 	  '$(test-wrapper-env)' '$(run-program-env)'; \
 	$(evaluate-test)
-endif
 
 $(objpfx)tst-dlsym1: $(libdl) $(shared-thread-library)
+endif
 
 ifeq (yes,$(build-shared))
 librt = $(common-objpfx)rt/librt.so
@@ -615,6 +626,8 @@ $(objpfx)libpthread.so: +postinit += $(addprefix $(objpfx),$(crtn-objs))
 
 # Make sure we link with the thread library.
 ifeq ($(build-shared),yes)
+tests += tst-unload
+
 $(addprefix $(objpfx), \
   $(filter-out $(tests-static) $(xtests-static) $(tests-reverse) \
     $(tests-nolibpthread), \

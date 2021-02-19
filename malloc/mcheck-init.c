@@ -29,5 +29,7 @@ turn_on_mcheck (void)
 }
 
 void (*__malloc_initialize_hook) (void) = turn_on_mcheck;
+#if SHLIB_COMPAT (libc, GLIBC_2_0, GLIBC_2_24)
 compat_symbol_reference (libc, __malloc_initialize_hook,
                          __malloc_initialize_hook, GLIBC_2_0);
+#endif

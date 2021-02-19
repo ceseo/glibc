@@ -96,7 +96,11 @@ zic-deps = $(objpfx)zic $(leapseconds) yearistype
 $(testdata)/America/New_York: northamerica $(zic-deps)
 	$(build-testdata)
 $(testdata)/$(posixrules-file): $(testdata)/America/New_York
+ifeq (yes, $(build-shared))
 	$(make-link); $(evaluate-test)
+else
+	$(evaluate-test)
+endif
 $(testdata)/Etc/UTC: etcetera $(zic-deps)
 	$(build-testdata)
 # Use a pattern rule to indicate the command produces both targets at once.

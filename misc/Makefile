@@ -95,16 +95,25 @@ ifeq (yes,$(build-shared))
 tests += tst-gethostid
 endif
 
+# FIXME
+ifeq (yes,$(build-shared))
 tests-internal := tst-atomic tst-atomic-long tst-allocate_once
+endif
 tests-static := tst-empty
 
 # Test for the internal, non-exported __fd_to_filename function.
+# FIXME
+ifeq (yes,$(build-shared))
 tests-internal += tst-fd_to_filename
+endif
 tests-static += tst-fd_to_filename
 
+# FIXME
 ifeq ($(run-built-tests),yes)
-tests-special += $(objpfx)tst-error1-mem.out \
-  $(objpfx)tst-allocate_once-mem.out
+tests-special += $(objpfx)tst-error1-mem.out
+ifeq (yes,$(build-shared))
+tests-special +=  $(objpfx)tst-allocate_once-mem.out
+endif
 endif
 
 CFLAGS-select.c += -fexceptions -fasynchronous-unwind-tables

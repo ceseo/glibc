@@ -47,7 +47,10 @@ tests := tst-shm tst-timer tst-timer2 \
 	 tst-timer3 tst-timer4 tst-timer5 \
 	 tst-cpuclock2 tst-cputimer1 tst-cputimer2 tst-cputimer3 \
 	 tst-shm-cancel
+#FIXME
+ifeq ($(build-shared),yes)
 tests-internal := tst-timer-sigmask
+endif
 
 extra-libs := librt
 extra-libs-others := $(extra-libs)

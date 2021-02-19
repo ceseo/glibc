@@ -104,10 +104,13 @@ tests		:= test-errno tstgetopt testfnm runtests runptests \
 		   tst-glob-tilde test-ssize-max tst-spawn4 bug-regex37 \
 		   bug-regex38 tst-regcomp-truncated tst-spawn-chdir \
 		   tst-wordexp-nocmd
+#FIXME
+ifeq (yes,$(build-shared))
 tests-internal	:= bug-regex5 bug-regex20 bug-regex33 \
 		   tst-rfc3484 tst-rfc3484-2 tst-rfc3484-3 \
 		   tst-glob_lstat_compat tst-spawn4-compat
 tests-container := bug-ga2
+endif
 xtests		:= tst-getaddrinfo4 tst-getaddrinfo5 tst-sched_rr_get_interval
 ifeq (yes,$(build-shared))
 test-srcs	:= globtest
@@ -133,11 +136,14 @@ generated += $(addprefix wordexp-test-result, 1 2 3 4 5 6 7 8 9 10) \
 	     tst-rxspencer-no-utf8-mem.out tst-rxspencer-no-utf8.mtrace \
 	     tst-getconf.out \
 	     tst-pcre-mem.out tst-pcre.mtrace tst-boost-mem.out \
-	     tst-boost.mtrace bug-ga2.mtrace bug-ga2-mem.out \
+	     tst-boost.mtrace \
 	     bug-glob2.mtrace bug-glob2-mem.out tst-vfork3-mem.out \
 	     tst-vfork3.mtrace getconf.speclist tst-fnmatch-mem.out \
 	     tst-fnmatch.mtrace bug-regex36.mtrace \
 	     testcases.h ptestcases.h
+ifeq (yes,$(build-shared))
+generated += bug-ga2.mtrace bug-ga2-mem.out
+endif
 
 ifeq ($(run-built-tests),yes)
 ifeq (yes,$(build-shared))
@@ -155,7 +161,10 @@ tests-special += $(objpfx)bug-regex2-mem.out $(objpfx)bug-regex14-mem.out \
 		 $(objpfx)tst-boost-mem.out $(objpfx)tst-getconf.out \
 		 $(objpfx)bug-glob2-mem.out $(objpfx)tst-vfork3-mem.out \
 		 $(objpfx)tst-fnmatch-mem.out $(objpfx)bug-regex36-mem.out \
-		 $(objpfx)tst-glob-tilde-mem.out $(objpfx)bug-ga2-mem.out
+		 $(objpfx)tst-glob-tilde-mem.out
+ifeq (yes,$(build-shared))
+tests-special += $(objpfx)bug-ga2-mem.out
+endif
 endif
 
 include ../Rules
@@ -358,6 +367,7 @@ $(objpfx)tst-getconf.out: tst-getconf.sh $(objpfx)getconf
 	$(SHELL) $< $(common-objpfx) '$(built-program-cmd)'; \
 	$(evaluate-test)
 
+ifeq ($(build-shared),yes)
 $(objpfx)bug-ga2-mem.out: $(objpfx)bug-ga2.out
 	{ test -r $(objpfx)bug-ga2.mtrace \
 	|| ( echo "bug-ga2.mtrace does not exist"; exit 77; ) \
@@ -365,6 +375,7 @@ $(objpfx)bug-ga2-mem.out: $(objpfx)bug-ga2.out
 	$(evaluate-test)
 
 bug-ga2-ENV = MALLOC_TRACE=$(objpfx)bug-ga2.mtrace
+endif
 
 bug-glob2-ENV = MALLOC_TRACE=$(objpfx)bug-glob2.mtrace
 

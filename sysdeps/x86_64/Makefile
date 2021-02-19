@@ -29,6 +29,7 @@ CFLAGS-.os += $(if $(filter $(@F),$(patsubst %,%.os,$(all-rtld-routines))),\
 
 sysdep-dl-routines += tlsdesc dl-tlsdesc tls_get_addr
 
+ifeq ($(build-shared),yes)
 tests += ifuncmain8
 modules-names += ifuncmod8
 
@@ -59,9 +60,11 @@ ifneq (no,$(have-tunables))
 # Test the state size for XSAVE when XSAVEC is disabled.
 tst-x86_64-1-ENV = GLIBC_TUNABLES=glibc.cpu.hwcaps=-XSAVEC
 endif
+endif
 
 $(objpfx)tst-x86_64-1: $(objpfx)x86_64/tst-x86_64mod-1.so
 
+ifeq (yes,$(build-shared))
 ifneq (no,$(have-tunables))
 tests += tst-platform-1
 modules-names += tst-platformmod-1 x86_64/tst-platformmod-2
@@ -83,6 +86,7 @@ test-extras += tst-audit4-aux tst-audit10-aux \
 	       tst-avx-aux tst-avx512-aux
 extra-test-objs += tst-audit4-aux.o tst-audit10-aux.o \
 		   tst-avx-aux.o tst-avx512-aux.o
+endif
 
 ifeq ($(have-insert),yes)
 tests += tst-split-dynreloc
@@ -185,8 +189,10 @@ endif
 
 endif # $(subdir) == elf
 
+ifeq ($(build-shared),yes)
 ifeq ($(subdir),csu)
 gen-as-const-headers += tlsdesc.sym rtld-offsets.sym
+endif
 endif
 
 $(objpfx)x86_64/tst-x86_64mod-1.os: $(objpfx)tst-x86_64mod-1.os

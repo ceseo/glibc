@@ -22,6 +22,7 @@
 #include <libm-alias-finite.h>
 #include <libm-alias-float.h>
 #include "math_config.h"
+#include <shlib-compat.h>
 
 /*
 EXP2F_TABLE_BITS = 5

@@ -22,7 +22,6 @@
 #include <libm-alias-double.h>
 #include <stdint.h>
 #include <shlib-compat.h>
-#include <first-versions.h>
 
 int
 __totalordermag (const double *x, const double *y)
@@ -58,6 +57,7 @@ __totalordermag (const double *x, const double *y)
 #endif
 libm_alias_double (__totalordermag, totalordermag)
 #if SHLIB_COMPAT (libm, GLIBC_2_25, GLIBC_2_31)
+#include <first-versions.h>
 int
 attribute_compat_text_section
 __totalordermag_compat (double x, double y)

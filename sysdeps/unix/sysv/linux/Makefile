@@ -104,11 +104,14 @@ sysdep_headers += sys/mount.h sys/acct.h \
 
 tests += tst-clone tst-clone2 tst-clone3 tst-fanotify tst-personality \
 	 tst-quota tst-sync_file_range tst-sysconf-iov_max tst-ttyname \
-	 test-errno-linux tst-memfd_create tst-mlock2 tst-pkey \
-	 tst-rlimit-infinity tst-ofdlocks tst-gettid tst-gettid-kill \
-	 tst-tgkill tst-sysvsem-linux tst-sysvmsg-linux tst-sysvshm-linux \
+	 test-errno-linux tst-memfd_create tst-mlock2 \
+	 tst-rlimit-infinity tst-ofdlocks \
+	 tst-sysvsem-linux tst-sysvmsg-linux tst-sysvshm-linux \
 	 tst-timerfd tst-ppoll
-tests-internal += tst-ofdlocks-compat tst-sigcontext-get_pc
+#FIXME
+ifeq (yes, $(build-shared))
+ tests-internal += tst-ofdlocks-compat tst-sigcontext-get_pc
+endif
 
 CFLAGS-tst-sigcontext-get_pc.c = -fasynchronous-unwind-tables
 
@@ -171,8 +174,6 @@ $(objpfx)tst-glibcsyscalls.out: \
 # Separate object file for access to the constant from the UAPI header.
 $(objpfx)tst-sysconf-iov_max: $(objpfx)tst-sysconf-iov_max-uapi.o
 
-$(objpfx)tst-pkey: $(shared-thread-library)
-
 tests-special += $(objpfx)tst-mman-consts.out
 $(objpfx)tst-mman-consts.out: ../sysdeps/unix/sysv/linux/tst-mman-consts.py
 	$(sysdeps-linux-python) \
@@ -181,9 +182,12 @@ $(objpfx)tst-mman-consts.out: ../sysdeps/unix/sysv/linux/tst-mman-consts.py
 	  < /dev/null > $@ 2>&1; $(evaluate-test)
 $(objpfx)tst-mman-consts.out: $(sysdeps-linux-python-deps)
 
+ifeq ($(build-shared),yes)
+$(objpfx)tst-pkey: $(shared-thread-library)
 $(objpfx)tst-gettid: $(shared-thread-library)
 $(objpfx)tst-gettid-kill: $(shared-thread-library)
 $(objpfx)tst-tgkill: $(shared-thread-library)
+endif
 
 endif # $(subdir) == misc
 

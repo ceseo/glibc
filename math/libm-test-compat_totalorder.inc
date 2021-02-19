@@ -17,7 +17,6 @@
    <https://www.gnu.org/licenses/>.  */
 
 #include <shlib-compat.h>
-#include <first-versions.h>
 #define COMPAT_TEST
 #include "libm-test-totalorder.c"
 
@@ -26,6 +25,7 @@
 #define COMPAT_VER CONCAT (FIRST_VERSION_libm_, FUNC_TEST (totalorder))
 
 #if TEST_COMPAT (libm, COMPAT_VER, GLIBC_2_31)
+# include <first-versions.h>
 
 int FUNC_TEST (compat_totalorder) (FLOAT, FLOAT);
 compat_symbol_reference (libm,

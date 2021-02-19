@@ -31,11 +31,13 @@ routines := herror inet_addr inet_ntop inet_pton nsap_addr res_init \
 	    res_hconf res_libc res-state res_randomid res-close \
 	    resolv_context resolv_conf
 
-tests = tst-aton tst-leaks tst-inet_ntop
+tests = tst-aton tst-inet_ntop
 tests-container = tst-leaks2
 
+ifeq ($(build-shared),yes)
+tests += tst-leaks
 tests-internal += tst-inet_aton_exact
-
+endif
 
 generate := mtrace-tst-leaks.out tst-leaks.mtrace tst-leaks2.mtrace
 
@@ -44,6 +46,7 @@ ifeq ($(have-thread-library),yes)
 extra-libs += libanl
 routines += gai_sigqueue
 
+ifeq ($(build-shared),yes)
 tests += \
   tst-bug18665 \
   tst-bug18665-tcp \
@@ -63,7 +66,10 @@ tests += \
 
 # This test calls __res_context_send directly, which is not exported
 # from libresolv.
+# FIXME
 tests-internal += tst-resolv-txnid-collision
+endif # $(build-shared)
+
 tests-static += tst-resolv-txnid-collision
 
 # These tests need libdl.
@@ -123,10 +129,13 @@ routines                += $(libnss_dns-routines) $(libresolv-routines)
 static-only-routines    += $(libnss_dns-routines) $(libresolv-routines)
 endif
 
+# FIXME
+ifeq (yes,$(build-shared))
 ifeq ($(run-built-tests),yes)
 ifneq (no,$(PERL))
 tests-special += $(objpfx)mtrace-tst-leaks.out $(objpfx)mtrace-tst-leaks2.out \
 		 $(objpfx)mtrace-tst-resolv-res_ninit.out
+endif
 endif
 endif
 
@@ -141,6 +150,7 @@ include ../gen-locales.mk
 
 CFLAGS-res_hconf.c += -fexceptions
 
+ifeq (yes,$(build-shared))
 # The DNS NSS modules needs the resolver.
 $(objpfx)libnss_dns.so: $(objpfx)libresolv.so
 
@@ -197,8 +207,6 @@ $(objpfx)tst-resolv-search: $(objpfx)libresolv.so $(shared-thread-library)
 $(objpfx)tst-resolv-trailing: $(objpfx)libresolv.so $(shared-thread-library)
 $(objpfx)tst-resolv-threads: \
   $(libdl) $(objpfx)libresolv.so $(shared-thread-library)
-$(objpfx)tst-resolv-txnid-collision: $(objpfx)libresolv.a \
-  $(static-thread-library)
 $(objpfx)tst-resolv-canonname: \
   $(libdl) $(objpfx)libresolv.so $(shared-thread-library)
 $(objpfx)tst-resolv-trustad: $(objpfx)libresolv.so $(shared-thread-library)
@@ -209,3 +217,6 @@ $(objpfx)tst-ns_name_compress: $(objpfx)libresolv.so
 $(objpfx)tst-ns_name_pton: $(objpfx)libresolv.so
 $(objpfx)tst-res_hnok: $(objpfx)libresolv.so
 $(objpfx)tst-p_secstodate: $(objpfx)libresolv.so
+endif
+$(objpfx)tst-resolv-txnid-collision: $(objpfx)libresolv.a \
+  $(static-thread-library)

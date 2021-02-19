@@ -75,7 +75,7 @@ tests += tst-cnd-basic tst-mtx-trylock tst-cnd-broadcast \
 	 tst-fork1 tst-fork2 tst-fork3 tst-fork4 \
 	 tst-atfork1 \
 	 tst-getpid3 \
-	 tst-join1 tst-join2 tst-join3 tst-join4 tst-join5 tst-join6 tst-join7 \
+	 tst-join1 tst-join2 tst-join3 tst-join4 tst-join5 tst-join6 \
 	 tst-join8 tst-join9 tst-join10 tst-join11 tst-join12 tst-join13 \
 	 tst-join14 tst-join15 \
 	 tst-key1 tst-key2 tst-key3 tst-key4 \
@@ -105,7 +105,6 @@ tests += tst-cnd-basic tst-mtx-trylock tst-cnd-broadcast \
 	 tst-pt-tls1 tst-pt-tls2 \
 	 tst-tsd1 tst-tsd2 tst-tsd5 tst-tsd6 \
 	 tst-umask1 \
-	 tst-unload \
 	 tst-unwind-thread \
 	 tst-pt-vfork1 tst-pt-vfork2 tst-vfork1x tst-vfork2x \
 
@@ -229,13 +228,17 @@ generated += tst-atfork2.mtrace
 generated += $(objpfx)tst-atfork2.mtrace \
 	     $(addsuffix .so,$(strip $(modules-names)))
 
+#FIXME
+ifeq ($(build-shared),yes)
 tests-internal += tst-cancel25 tst-robust8
+endif
 
 tests += tst-oncex3 tst-oncex4
 
 modules-names += tst-join7mod
 
 ifeq ($(build-shared),yes)
+tests += tst-join7
 tests-static += tst-cond8-static
 tests += tst-cond8-static
 endif

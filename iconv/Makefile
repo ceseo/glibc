@@ -44,7 +44,7 @@ CFLAGS-linereader.c += -DNO_TRANSLITERATION
 CFLAGS-simple-hash.c += -I../locale
 
 tests	= tst-iconv1 tst-iconv2 tst-iconv3 tst-iconv4 tst-iconv5 tst-iconv6 \
-	  tst-iconv7 tst-iconv8 tst-iconv-mt tst-iconv-opt
+	  tst-iconv7 tst-iconv8 tst-iconv-opt
 
 others		= iconv_prog iconvconfig
 install-others-programs	= $(inst_bindir)/iconv
@@ -69,9 +69,10 @@ endif
 $(objpfx)gconv-modules: test-gconv-modules
 	cp $< $@
 
+ifeq (yes,$(build-shared))
+tests += tst-iconv-mt
 $(objpfx)tst-iconv-mt: $(shared-thread-library)
 
-ifeq (yes,$(build-shared))
 tests += tst-gconv-init-failure
 modules-names += tst-gconv-init-failure-mod
 modules-names-tests += tst-gconv-init-failure-mod

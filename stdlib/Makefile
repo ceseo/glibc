@@ -77,25 +77,36 @@ tests		:= tst-strtol tst-strtod testmb testrand testsort testdiv   \
 		   tst-secure-getenv tst-strtod-overflow tst-strtod-round   \
 		   tst-tininess tst-strtod-underflow tst-setcontext3	    \
 		   tst-strtol-locale tst-strtod-nan-locale tst-strfmon_l    \
-		   tst-quick_exit tst-thread-quick_exit tst-width	    \
+		   tst-width					  	    \
 		   tst-width-stdint tst-strfrom tst-strfrom-locale	    \
 		   tst-getrandom tst-atexit tst-at_quick_exit 		    \
-		   tst-cxa_atexit tst-on_exit test-atexit-race 		    \
-		   test-at_quick_exit-race test-cxa_atexit-race             \
-		   test-on_exit-race test-dlclose-exit-race 		    \
 		   tst-makecontext-align test-bz22786 tst-strtod-nan-sign \
 		   tst-swapcontext1 tst-setcontext4 tst-setcontext5 \
 		   tst-setcontext6 tst-setcontext7 tst-setcontext8 \
-		   tst-setcontext9 tst-bz20544 tst-canon-bz26341
+		   tst-setcontext9 tst-bz20544
 
-tests-internal	:= tst-strtod1i tst-strtod3 tst-strtod4 tst-strtod5i \
-		   tst-tls-atexit tst-tls-atexit-nodelete
+tests-internal	:= tst-strtod1i tst-strtod3 tst-strtod4 tst-strtod5i
 tests-static	:= tst-secure-getenv
 tests-container := tst-system
 
 ifeq ($(build-hardcoded-path-in-tests),yes)
 tests += tst-empty-env
 endif
+
+ifeq ($(build-shared),yes)
+tests += \
+  test-atexit-race \
+  test-at_quick_exit-race \
+  tst-quick_exit \
+  tst-thread-quick_exit \
+  test-on_exit-race \
+  test-dlclose-exit-race \
+  test-cxa_atexit-race \
+  tst-canon-bz26341
+
+tests-internal += \
+  tst-tls-atexit \
+  tst-tls-atexit-nodelete
 
 LDLIBS-test-atexit-race = $(shared-thread-library)
 LDLIBS-test-at_quick_exit-race = $(shared-thread-library)
@@ -115,6 +126,7 @@ LDLIBS-tst-thread-quick_exit = -lstdc++
 $(objpfx)tst-thread-quick_exit: $(shared-thread-library)
 else
 tests-unsupported += tst-quick_exit tst-thread-quick_exit
+endif
 endif
 
 modules-names	= tst-tls-atexit-lib test-dlclose-exit-race-helper
@@ -230,11 +242,14 @@ $(objpfx)tst-strtod-nan-sign: $(libm)
 tst-tls-atexit-lib.so-no-z-defs = yes
 test-dlclose-exit-race-helper.so-no-z-defs = yes
 
+ifeq (yes,$(build-shared))
+tests-internal += tst-tls-atexit tst-tls-atexit-nodelete
 $(objpfx)tst-tls-atexit: $(shared-thread-library) $(libdl)
 $(objpfx)tst-tls-atexit.out: $(objpfx)tst-tls-atexit-lib.so
 
 $(objpfx)tst-tls-atexit-nodelete: $(shared-thread-library) $(libdl)
 $(objpfx)tst-tls-atexit-nodelete.out: $(objpfx)tst-tls-atexit-lib.so
+endif
 
 $(objpfx)tst-setcontext3.out: tst-setcontext3.sh $(objpfx)tst-setcontext3
 	$(SHELL) $< $(common-objpfx) '$(test-program-prefix-before-env)' \

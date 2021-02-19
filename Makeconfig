@@ -1092,8 +1092,6 @@ subdir-srcdirs = $(foreach dir,$(subdirs),\
 	sed '/^[ 	]*#/d;/^[ 	]*$$/d' $< > $@T
 	mv -f $@T $@
 
-ifeq (yes, $(build-shared))
-
 # To generate a header to support more than one ABI for different
 # architecture variants, the CPU/Makefile defines abi-variants to be a
 # list of names for those variants (e.g. 32 64), and, for each variant,
@@ -1176,7 +1174,6 @@ endif
 
 # Generate version maps, but wait until sysdep-subdirs is known
 ifeq ($(sysd-sorted-done),t)
-ifeq ($(build-shared),yes)
 -include $(common-objpfx)sysd-versions
 -include $(common-objpfx)Versions.mk
 $(addprefix $(common-objpfx),$(version-maps)): $(common-objpfx)sysd-versions
@@ -1226,12 +1223,12 @@ $(common-objpfx)versions.stmp: $(common-objpfx)Versions.all \
 	mv -f $(common-objpfx)sysd-versionsT $(common-objpfx)sysd-versions
 	touch $@
 endif # avoid-generated
-endif # $(build-shared) = yes
 endif # sysd-sorted-done
 
 # The name under which the run-time dynamic linker is installed.
 # We are currently going for the convention that `/lib/ld.so.1'
 # names the SVR4/ELF ABI-compliant dynamic linker.
+ifeq ($(build-shared),yes)
 ifndef rtld-installed-name
 ifdef ld.so-version
 rtld-installed-name = $(ld.so-version)

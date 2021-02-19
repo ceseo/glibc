@@ -18,7 +18,9 @@
 
 #include <sysdep.h>
 #include <tls.h>
+#ifdef SHARED
 #include "tlsdesc.h"
+#endif
 
 	.text
 

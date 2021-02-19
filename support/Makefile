@@ -210,11 +210,15 @@ CFLAGS-support_paths.c = \
 # -fexcess-precision=standard.
 CFLAGS-timespec.c += -fexcess-precision=standard
 
+ifeq (yes, $(build-shared))
 ifeq (,$(CXX))
 LINKS_DSO_PROGRAM = links-dso-program-c
 else
 LINKS_DSO_PROGRAM = links-dso-program
 LDLIBS-links-dso-program = -lstdc++ -lgcc -lgcc_s $(libunwind)
+endif
+else
+LINKS_DSo_PROGRAM =
 endif
 
 ifeq (yes,$(have-selinux))
@@ -244,7 +248,6 @@ tests = \
   tst-support_blob_repeat \
   tst-support_capture_subprocess \
   tst-support_descriptors \
-  tst-support_format_dns_packet \
   tst-support-process_state \
   tst-support_quote_blob \
   tst-support_quote_string \
@@ -254,7 +257,12 @@ tests = \
   tst-test_compare_string \
   tst-timespec \
   tst-xreadlink \
-  tst-xsigstack \
+  tst-xsigstack
+
+ifeq ($(build-shared),yes)
+tests += \
+  tst-support_format_dns_pack
+endif
 
 ifeq ($(run-built-tests),yes)
 tests-special = \

@@ -23,6 +23,7 @@
 #include <libm-alias-finite.h>
 #include <libm-alias-float.h>
 #include "math_config.h"
+#include <shlib-compat.h>
 
 /*
 POWF_LOG2_POLY_ORDER = 5

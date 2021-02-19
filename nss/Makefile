@@ -80,7 +80,7 @@ endif
 
 # If we have a thread library then we can test cancellation against
 # some routines like getpwuid_r.
-ifeq (yes,$(have-thread-library))
+ifeq (yesyes,$(have-thread-library)$(build-shared))
 tests += tst-cancel-getpwuid_r
 endif
 

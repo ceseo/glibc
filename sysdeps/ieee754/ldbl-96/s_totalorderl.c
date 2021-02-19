@@ -23,7 +23,6 @@
 #include <nan-high-order-bit.h>
 #include <stdint.h>
 #include <shlib-compat.h>
-#include <first-versions.h>
 
 int
 __totalorderl (const long double *x, const long double *y)
@@ -71,6 +70,7 @@ __totalorderl (const long double *x, const long double *y)
 #endif
 libm_alias_ldouble (__totalorder, totalorder)
 #if SHLIB_COMPAT (libm, GLIBC_2_25, GLIBC_2_31)
+# include <first-versions.h>
 int
 attribute_compat_text_section
 __totalorder_compatl (long double x, long double y)

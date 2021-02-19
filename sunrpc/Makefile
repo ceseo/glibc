@@ -64,17 +64,20 @@ routines := auth_none authuxprot clnt_raw clnt_simp \
 shared-only-routines = $(routines)
 endif
 
-tests = tst-xdrmem tst-xdrmem2 test-rpcent tst-udp-error tst-udp-timeout \
-  tst-udp-nonblocking
+tests = test-rpcent
 xtests := tst-getmyaddr
 
 ifeq ($(have-thread-library),yes)
 xtests += thrsvc
+ifeq (yes,$(build-shared))
 tests += tst-udp-garbage
 tests-internal += tst-svc_register
 endif
+endif
 
 ifeq (yes,$(build-shared))
+tests += tst-xdrmem tst-xdrmem2 tst-udp-error tst-udp-timeout \
+  tst-udp-nonblocking
 rpc-compat-routines = $(addprefix compat-,$(need-export-routines))
 rpc-compat-routines.os = $(addprefix $(objpfx), \
 				     $(addsuffix .os,$(rpc-compat-routines)))

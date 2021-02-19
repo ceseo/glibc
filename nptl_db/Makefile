@@ -51,7 +51,10 @@ libthread_db-inhibit-o = $(filter-out .os,$(object-suffixes))
 # The ps_* callback functions are not defined.
 libthread_db.so-no-z-defs = yes
 
+#FIXME
+ifeq ($(build-shared),yes)
 tests-special += $(objpfx)db-symbols.out
+endif
 
 include ../Rules
 

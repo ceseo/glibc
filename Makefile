@@ -583,10 +583,14 @@ endef
 # (which we do not build) that GCC-compiled programs depend on.
 
 
+ifeq (yes, $(build-shared))
 ifeq (,$(CXX))
 LINKS_DSO_PROGRAM = links-dso-program-c
 else
 LINKS_DSO_PROGRAM = links-dso-program
+endif
+else
+LINKS_DSO_PROGRAM =
 endif
 
 $(tests-container) $(addsuffix /tests,$(subdirs)) : \

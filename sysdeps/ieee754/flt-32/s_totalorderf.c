@@ -22,7 +22,6 @@
 #include <nan-high-order-bit.h>
 #include <stdint.h>
 #include <shlib-compat.h>
-#include <first-versions.h>
 
 int
 __totalorderf (const float *x, const float *y)
@@ -60,6 +59,7 @@ __totalorderf (const float *x, const float *y)
 #endif
 libm_alias_float (__totalorder, totalorder)
 #if SHLIB_COMPAT (libm, GLIBC_2_25, GLIBC_2_31)
+# include <first-versions.h>
 int
 attribute_compat_text_section
 __totalorder_compatf (float x, float y)

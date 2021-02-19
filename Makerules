@@ -93,7 +93,6 @@ before-compile := $(filter $(common-objpfx)mach% $(common-objpfx)hurd%,\
 			       $(before-compile))
 
 # Even before that, we need abi-versions.h which is generated right here.
-ifeq ($(build-shared),yes)
 ifndef avoid-generated
 before-compile := $(common-objpfx)abi-versions.h $(before-compile)
 $(common-objpfx)abi-versions.h: $(..)scripts/abi-versions.awk \
@@ -113,7 +112,6 @@ before-compile := $(common-objpfx)first-versions.h \
 $(common-objpfx)first-versions.h: $(common-objpfx)versions.stmp
 $(common-objpfx)ldbl-compat-choose.h: $(common-objpfx)versions.stmp
 endif # avoid-generated
-endif # $(build-shared) = yes
 
 ifndef avoid-generated
 ifneq (,$(CXX))
@@ -280,6 +278,7 @@ $(common-objpfx)%.h $(common-objpfx)%.h.d: $(..)scripts/gen-as-const.py \
 vpath %.sym $(sysdirs)
 before-compile += $(gen-as-const-headers:%.sym=$(common-objpfx)%.h)
 
+ifeq (yes, $(build-shared))
 tests-internal += $(gen-as-const-headers:%.sym=test-as-const-%)
 generated += $(gen-as-const-headers:%.sym=test-as-const-%.c)
 $(objpfx)test-as-const-%.c: $(..)scripts/gen-as-const.py $(..)Makerules \
@@ -287,6 +286,7 @@ $(objpfx)test-as-const-%.c: $(..)scripts/gen-as-const.py $(..)Makerules \
 	($(AWK) '{ sub(/^/, "asconst_", $$2); print; }' $(filter %.h,$^); \
 	 $(PYTHON) $< --test $(filter %.sym,$^)) > $@T
 	mv -f $@T $@
+endif
 endif
 
 ifeq (yes,$(build-shared))
@@ -1049,6 +1049,7 @@ $(LN_S) `$(..)scripts/rellns-sh -p $< $@` $@
 endef
 endif
 
+ifeq ($(build-shared),yes)
 ifdef libc.so-version
 # For a library specified to be version N, install three files:
 # libc.so	->	libc.so.N	(e.g. libc.so.6)
@@ -1102,7 +1103,8 @@ else
 install: $(inst_slibdir)/libc.so
 $(inst_slibdir)/libc.so: $(common-objpfx)libc.so $(+force)
 	$(do-install-program)
-endif
+endif # libc.so-version
+endif # build-shared
 
 ifneq (,$(versioned))
 # Produce three sets of rules as above for all the smaller versioned libraries.

@@ -25,7 +25,7 @@ endif
 
 # Variables for libmvec tests.
 ifeq ($(subdir),math)
-ifeq ($(build-mathvec),yes)
+ifeq ($(build-mathvec)$(build-shared),yesyes)
 libmvec-tests += double-vlen2 double-vlen4 double-vlen4-avx2 \
 		 float-vlen4 float-vlen8 float-vlen8-avx2
 tests += test-double-libmvec-sincos test-double-libmvec-sincos-avx \
