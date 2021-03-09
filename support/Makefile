@@ -211,11 +211,15 @@ CFLAGS-support_paths.c = \
 # -fexcess-precision=standard.
 CFLAGS-timespec.c += -fexcess-precision=standard
 
+ifeq (yes, $(build-shared))
 ifeq (,$(CXX))
 LINKS_DSO_PROGRAM = links-dso-program-c
 else
 LINKS_DSO_PROGRAM = links-dso-program
 LDLIBS-links-dso-program = -lstdc++ -lgcc -lgcc_s $(libunwind)
+endif
+else
+LINKS_DSO_PROGRAM =
 endif
 
 ifeq (yes,$(have-selinux))

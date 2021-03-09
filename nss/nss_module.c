@@ -63,6 +63,9 @@ __libc_lock_define (static, nss_module_list_lock);
 static bool is_nscd;
 /* The callback passed to the init functions when nscd is used.  */
 static void (*nscd_init_cb) (size_t, struct traced_file *);
+#else
+# define is_nscd (0)
+# define nscd_init_cb (NULL)
 #endif
 
 /* Allocate the service NAME with length NAME_LENGTH.  If the service
