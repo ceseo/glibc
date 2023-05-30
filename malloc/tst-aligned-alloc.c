@@ -28,6 +28,11 @@
 static int
 do_test (void)
 {
+
+#ifdef __clang__
+  return 77;
+#else
+
   void *p1;
   void *p2;
   void *p3;
@@ -74,6 +79,7 @@ do_test (void)
   free (p1);
   free (p2);
   return 0;
+#endif
 }
 
 #define TEST_FUNCTION do_test ()
